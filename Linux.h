@@ -19,8 +19,8 @@ Window win;
 extern bool closed = false;
 bool mtlused = false;
 extern bool minimized = false;
-std::vector<std::string> mtlObjects[];
-std::string mtlIndexer[];
+std::vector<std::vector<std::string>> mtlObjects;
+std::vector<std::string> mtlIndexer;
 //needs function for this v & ^
 //needs resizing support & mouse support
 extern char lastkey;
@@ -28,8 +28,6 @@ extern bool mouseClicked = false;
 extern double mouseLocX;
 extern double mouseLocY;
 XEvent event;
-
-std::vector<OBJ> scene;
 
 struct OBJv
 {
@@ -50,6 +48,9 @@ struct OBJ
     std::vector<std::string> colors; //Hex values in string format per shape
 
 };
+
+std::vector<OBJ> scene;
+
 static void checkEvents ()
 {
     while(true)
