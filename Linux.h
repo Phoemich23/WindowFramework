@@ -19,7 +19,6 @@ Window win;
 extern bool closed = false;
 bool mtlused = false;
 extern bool minimized = false;
-std::vector<std::vector<std::string>> mtlObjects;
 std::vector<std::string> mtlIndexer;
 //needs function for this v & ^
 //needs resizing support & mouse support
@@ -29,23 +28,36 @@ extern double mouseLocX;
 extern double mouseLocY;
 XEvent event;
 
+struct Color
+{
+    double x, y, z;
+    String hex;
+};
+
+std::vector<std::vector<Color>> mtlColors;
+
 struct OBJv
 {
     double x, y, z, w;
 };
+struct Line
+{
+    double x1, y1, z1, w1;
+    double x2, y2, z2, w2;
+};
 
 struct Shape
 {
-    std::vector<std::string> lines;
+    std::vector<Line> lines;
 };
 struct OBJ
 {
     std::vector<OBJv> points;
     //points turns into lines
-    std::vector<std::string> lines;
+    std::vector<Line> lines;
     //^^ needs to be sorted into shapes
     std::vector<Shape> shapes;
-    std::vector<std::string> colors; //Hex values in string format per shape
+    std::vector<Color> colors; //Hex values in string format per shape
 
 };
 
@@ -92,16 +104,6 @@ std::vector<std::string> parseTexture(std::string line)
     //say colors in hex format and identify point to be located on`
     return colors;
 }
-std::vector<std::string> mtllibColors(std::string line)
-{
-    std::vector<std::string> colors;
-    //parse line to get second token
-    //open mtl a.k.a. second token ^^
-    //parse to colors
-    //if texture
-    //parseTexture(line);
-    return colors;
-}
 
 OBJ openOBJ(std::string filepath)
 {
@@ -143,15 +145,20 @@ OBJ openOBJ(std::string filepath)
             }
             else
             {
-                filepath = filepath.substr(0, 7);
-                //for loop to compare to elements in mtlIndexer array
+                filepath = filepath.substr(7, filepath.length() - 7);
+                for(int i = 0; i < mtlIndexer.size(); i++) {
+                    if(filepath.compare(mtlIndexer[i])) {
+                        object.colors.insert(object.colors.end(), mtlColors.begin(), mtlColors.end());
+                        break;
+                    }
+                }
             }
         }
     }
 }
-void displayOBJ(OBJ toDisplay)
+void displayOBJ(OBJ toDisplay, bool shade)
 {
-    //calculate 2D view and display pixels with correct colors. Darken colors for the farther they are.
+    //calculate 2D view and display pixels with correct colors. Darken colors for the farther they are IF shade is true.
 }
 void removeOBJ(int toRemove)
 {
