@@ -31,11 +31,13 @@ XEvent event;
 
 std::vector<OBJ> scene;
 
-struct OBJv {
+struct OBJv
+{
     double x, y, z, w;
 };
 
-struct Shape {
+struct Shape
+{
     std::vector<std::string> lines;
 };
 struct OBJ
@@ -58,7 +60,7 @@ static void checkEvents ()
         case ClientMessage:
             closed = true;
             break;
-        //cases for other events
+            //cases for other events
         }
     }
     return;
@@ -96,7 +98,7 @@ std::vector<std::string> mtllibColors(std::string line)
     //open mtl a.k.a. second token ^^
     //parse to colors
     //if texture
-        //parseTexture(line);
+    //parseTexture(line);
     return colors;
 }
 
@@ -110,15 +112,19 @@ OBJ openOBJ(std::string filepath)
         {
             continue;
         }
-        if(filepath.substr(0,2).compare("v ")) {
+        if(filepath.substr(0,2).compare("v "))
+        {
             filepath = filepath.substr(2, filepath.length() - 2);
             std::istringstream iss(filepath);
             OBJv v;
             iss >> v.x >> v.y >> v.z;
             iss.ignore();
-            if (iss) {
-                iss > v.w;
-            } else {
+            if (iss)
+            {
+                iss >> v.w;
+            }
+            else
+            {
                 v.w = 1;
             }
             object.points.push_back(v);
@@ -130,19 +136,24 @@ OBJ openOBJ(std::string filepath)
         }
         if(filepath.substr(0, 6).compare("usemtl"))
         {
-            if(mtlused == false) {
+            if(mtlused == false)
+            {
                 continue;
-            } else {
+            }
+            else
+            {
                 filepath = filepath.substr(0, 7);
                 //for loop to compare to elements in mtlIndexer array
             }
         }
     }
 }
-void displayOBJ(OBJ toDisplay) {
+void displayOBJ(OBJ toDisplay)
+{
     //calculate 2D view and display pixels with correct colors. Darken colors for the farther they are.
 }
-void removeOBJ(int toRemove) {
+void removeOBJ(int toRemove)
+{
     //stop displaying OBJ at given index
 }
 #endif
