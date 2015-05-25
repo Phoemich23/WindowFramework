@@ -49,8 +49,7 @@ static void checkEvents ()
         //cases for other events
         }
     }
-    
-    std::this_thread.terminate();
+    return;
 }
 void newBlankWindow(int x, int y)
 {
