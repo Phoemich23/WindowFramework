@@ -117,7 +117,7 @@ OBJ openOBJ(std::string filepath)
             iss >> point.x >> point.y >> point.z;
             iss.ignore();
             if (iss) {
-                iss > w;
+                iss > point.w;
             } else {
                 v.w = 1;
             }
