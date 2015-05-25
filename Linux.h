@@ -114,10 +114,10 @@ OBJ openOBJ(std::string filepath)
             filepath = filepath.substr(2, filepath.length() - 2);
             std::istringstream iss(filepath);
             OBJv v;
-            iss >> point.x >> point.y >> point.z;
+            iss >> v.x >> v.y >> v.z;
             iss.ignore();
             if (iss) {
-                iss > point.w;
+                iss > v.w;
             } else {
                 v.w = 1;
             }
