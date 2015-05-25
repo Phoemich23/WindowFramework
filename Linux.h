@@ -25,10 +25,15 @@ extern bool mouseClicked = false;
 extern double mouseLocX;
 extern double mouseLocY;
 XEvent event;
+struct Shape {
+    std:vector<std::string> lines;
+};
 struct OBJ
 {
-    std::vector<std::string> lines;
-    std::vector<std::string> colors;
+    std:vector<std::string> lines;
+    //^^ needs to be sorted into shapes
+    std:vector<Shape> shapes;
+    std::vector<std::string> colors; //Hex values in string format per shape
 
 };
 static void checkEvents ()
@@ -44,6 +49,8 @@ static void checkEvents ()
         //cases for other events
         }
     }
+    
+    std::this_thread.terminate();
 }
 void newBlankWindow(int x, int y)
 {
