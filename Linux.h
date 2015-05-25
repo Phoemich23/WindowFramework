@@ -14,43 +14,43 @@
 #include <sstream>
 #include <vector>
 
-Display *dis;
-Window win;
+static Display *dis;
+static Window win;
 extern bool closed = false;
-bool mtlused = false;
+static bool mtlused = false;
 extern bool minimized = false;
-std::vector<std::string> mtlIndexer;
+static std::vector<std::string> mtlIndexer;
 //needs function for this v & ^
 //needs resizing support & mouse support
 extern char lastkey;
 extern bool mouseClicked = false;
 extern double mouseLocX;
 extern double mouseLocY;
-XEvent event;
+static XEvent event;
 
-struct Color
+static struct Color
 {
     double x, y, z;
     String hex;
 };
 
-std::vector<std::vector<Color>> mtlColors;
+static std::vector<std::vector<Color>> mtlColors;
 
-struct OBJv
+static struct OBJv
 {
     double x, y, z, w;
 };
-struct Line
+static struct Line
 {
     double x1, y1, z1, w1;
     double x2, y2, z2, w2;
 };
 
-struct Shape
+static struct Shape
 {
     std::vector<Line> lines;
 };
-struct OBJ
+static struct OBJ
 {
     std::vector<OBJv> points;
     //points turns into lines
@@ -61,7 +61,7 @@ struct OBJ
 
 };
 
-std::vector<OBJ> scene;
+static std::vector<OBJ> scene;
 
 static void checkEvents ()
 {
@@ -90,7 +90,7 @@ void newBlankWindow(int x, int y)
     std::thread (checkEvents).detach();
 }
 
-void mtllib(std::string line)
+static void mtllib(std::string line)
 {
     //parse line to get second token
     //open mtl a.k.a. second token ^^
@@ -98,7 +98,7 @@ void mtllib(std::string line)
     //put objects names in mtlIndexer
     //put objects into mtlObjects
 }
-std::vector<std::string> parseTexture(std::string line)
+static std::vector<std::string> parseTexture(std::string line)
 {
     std::vector<std::string> colors;
     //say colors in hex format and identify point to be located on`
