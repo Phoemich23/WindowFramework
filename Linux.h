@@ -11,13 +11,16 @@
 #include <thread>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <vector>
 
 Display *dis;
 Window win;
-int junk = 0;
 extern bool closed = false;
+bool mtlused = false;
 extern bool minimized = false;
+std::vector<std::string> mtlObjects[];
+std::string mtlIndexer[];
 //needs function for this v & ^
 //needs resizing support & mouse support
 extern char lastkey;
@@ -28,11 +31,17 @@ XEvent event;
 
 std::vector<OBJ> scene;
 
+struct OBJv {
+    double x, y, z, w;
+};
+
 struct Shape {
     std::vector<std::string> lines;
 };
 struct OBJ
 {
+    std::vector<OBJv> points;
+    //points turns into lines
     std::vector<std::string> lines;
     //^^ needs to be sorted into shapes
     std::vector<Shape> shapes;
@@ -66,17 +75,18 @@ void newBlankWindow(int x, int y)
     std::thread (checkEvents).detach();
 }
 
-std::vector<std::string> mtllib(std::string line)
+void mtllib(std::string line)
 {
-    std::vector<std::string> lines;
     //parse line to get second token
     //open mtl a.k.a. second token ^^
-    //parse to lines
-    return lines;
+    //parse mtl and find objects
+    //put objects names in mtlIndexer
+    //put objects into mtlObjects
 }
 std::vector<std::string> parseTexture(std::string line)
 {
     std::vector<std::string> colors;
+    //say colors in hex format and identify point to be located on`
     return colors;
 }
 std::vector<std::string> mtllibColors(std::string line)
@@ -100,10 +110,32 @@ OBJ openOBJ(std::string filepath)
         {
             continue;
         }
+        if(filepath.substr(0,2).compare("v ")) {
+            filepath = filepath.substr(2, filepath.length() - 2);
+            std::istringstream iss(filepath.substr(filepath);
+            OBJv v;
+            iss >> point.x >> point.y >> point.z;
+            iss.ignore();
+            if (iss) {
+                iss > w;
+            } else {
+                v.w = 1;
+            }
+            object.points.push_back(v);
+        }
         if(filepath.substr(0, 6).compare("mtllib"))
         {
-            object.lines.insert(object.lines.end(), mtllib(filepath).begin(), mtllib(filepath).end());
-            object.colors.insert(object.colors.end(), mtllibColors(filepath).begin(), mtllibColors(filepath).end());
+            mtlused = true;
+            mtllib(filepath);
+        }
+        if(filepath.substr(0, 6).compare("usemtl"))
+        {
+            if(mtlused == false) {
+                continue;
+            } else {
+                filepath = filepath.substr(0, 7);
+                //for loop to compare to elements in mtlIndexer array
+            }
         }
     }
 }
