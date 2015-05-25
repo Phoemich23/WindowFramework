@@ -146,8 +146,10 @@ OBJ openOBJ(std::string filepath)
             else
             {
                 filepath = filepath.substr(7, filepath.length() - 7);
-                for(int i = 0; i < mtlIndexer.size(); i++) {
-                    if(filepath.compare(mtlIndexer[i])) {
+                for(int i = 0; i < mtlIndexer.size(); i++)
+                {
+                    if(filepath.compare(mtlIndexer[i]))
+                    {
                         object.colors.insert(object.colors.end(), mtlColors.begin(), mtlColors.end());
                         break;
                     }
