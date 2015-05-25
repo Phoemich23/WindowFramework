@@ -25,6 +25,9 @@ extern bool mouseClicked = false;
 extern double mouseLocX;
 extern double mouseLocY;
 XEvent event;
+
+std::vector<OBJ> scene;
+
 struct Shape {
     std::vector<std::string> lines;
 };
@@ -103,5 +106,11 @@ OBJ openOBJ(std::string filepath)
             object.colors.insert(object.colors.end(), mtllibColors(filepath).begin(), mtllibColors(filepath).end());
         }
     }
+}
+void displayOBJ(OBJ toDisplay) {
+    //calculate 2D view and display pixels with correct colors. Darken colors for the farther they are.
+}
+void removeOBJ(int toRemove) {
+    //stop displaying OBJ at given index
 }
 #endif
