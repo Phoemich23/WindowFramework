@@ -112,7 +112,7 @@ OBJ openOBJ(std::string filepath)
         }
         if(filepath.substr(0,2).compare("v ")) {
             filepath = filepath.substr(2, filepath.length() - 2);
-            std::istringstream iss(filepath.substr(filepath);
+            std::istringstream iss(filepath);
             OBJv v;
             iss >> point.x >> point.y >> point.z;
             iss.ignore();
