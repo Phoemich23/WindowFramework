@@ -28,40 +28,45 @@ extern double mouseLocX;
 extern double mouseLocY;
 static XEvent event;
 
-static struct Color
+struct pointColor
 {
     double x, y, z;
-    String hex;
-};
+    std::string hex;
+ };
 
-static std::vector<std::vector<Color>> mtlColors;
+std::vector<std::vector<pointColor>> mtlColors;
 
-static struct OBJv
+struct OBJv
 {
     double x, y, z, w;
 };
-static struct Line
+struct Line
 {
     double x1, y1, z1, w1;
     double x2, y2, z2, w2;
 };
 
-static struct Shape
+struct Shape
 {
     std::vector<Line> lines;
 };
-static struct OBJ
+struct OBJ
 {
     std::vector<OBJv> points;
     //points turns into lines
     std::vector<Line> lines;
     //^^ needs to be sorted into shapes
     std::vector<Shape> shapes;
-    std::vector<Color> colors; //Hex values in string format per shape
-
+    std::vector<pointColor> colors; //Hex values in string format per shape
+    int xlength, ylength, zlength;
+    int x1, x2, y1, y2, z1, z2; //closest and farthest points on each axis
 };
 
 static std::vector<OBJ> scene;
+
+struct point3d {
+    int x, y, z;
+};
 
 static void checkEvents ()
 {
@@ -150,7 +155,7 @@ OBJ openOBJ(std::string filepath)
                 {
                     if(filepath.compare(mtlIndexer[i]))
                     {
-                        object.colors.insert(object.colors.end(), mtlColors.begin(), mtlColors.end());
+                        object.colors.insert(object.colors.end(), mtlColors[i].begin(), mtlColors[i].end());
                         break;
                     }
                 }
@@ -158,7 +163,7 @@ OBJ openOBJ(std::string filepath)
         }
     }
 }
-void displayOBJ(OBJ toDisplay, bool shade)
+void displayOBJ(OBJ toDisplay, bool shaderEnable, int x1, int x2, int y1, int y2, int z1, int z2)
 {
     //calculate 2D view and display pixels with correct colors. Darken colors for the farther they are IF shade is true.
 }
