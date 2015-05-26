@@ -27,8 +27,8 @@ extern bool mouseClicked = false;
 extern double mouseLocX;
 extern double mouseLocY;
 static XEvent event;
-static int *frontx = NULL;
-static int *fronty = NULL;
+static std::vector<int> frontx;
+static std::vector<int> fronty;
 static GC gc;
 struct point
 {
@@ -97,8 +97,8 @@ static void checkEvents ()
         #define CreateNotify            16
         #define DestroyNotify           17
         #define UnmapNotify             18
-        #define MapNotify               19
         #define MapRequest              20
+        #define MapNotify               19
         #define ReparentNotify          21
         #define ConfigureNotify         22
         #define ConfigureRequest        23
@@ -120,17 +120,16 @@ static void checkEvents ()
         {
         case ClientMessage:
             closed = true;
-            break;
-        case //cases for other events
-            }
+            goto exit_loop;
+        //case //cases for other events
+        }
     }
-    return;
+    exit_loop:
+      return;
 }
 void newBlankWindow(int x, int y, int z)
 {
-    unsigned int white = WhitePixel(dsp,screen);
-    numbers = (int*) realloc (frontx, x *sizeof(int));
-    fronty = (int*) realloc (fronty, y *sizeof(int));
+    unsigned int white = WhitePixel(dis, win);
     dis = XOpenDisplay(NULL);
     win = XCreateSimpleWindow(dis, RootWindow(dis, 0), 1, 1, x, y, \
                               0, BlackPixel (dis, 0), BlackPixel(dis, 0));
@@ -164,6 +163,11 @@ static std::vector<std::string> parseTexture(std::string line)
     std::vector<std::string> colors;
     //say colors in hex format and identify point to be located on`
     return colors;
+}
+
+point3d OBJvToPoint3D(OBJv toConvert) {
+  point3d returnee = {toConvert.x, toConvert.y, toConvert.z};
+  return returnee;
 }
 
 OBJ openOBJ(std::string filepath)
@@ -250,12 +254,12 @@ OBJ openOBJ(std::string filepath)
                     int slashLoc = filepath.find("/");
                     int line = std::stoi(filepath.substr(0, slashLoc));
                     filepath = filepath.substr(filepath.find(" ") + 1, filepath.length() - filepath.find(" ") + 1);
-                    point3d line1 = object.points[line-1];
+                    point3d line1 = OBJvToPoint3D(object.points[line-1]);
                     object.lines[jk][i].x1 = line1.x;
                     object.lines[jk][i].y1 = line1.y;
                     object.lines[jk][i].z1 = line1.z;
-                    int slashLoc = filepath.find("/");
-                    int line = std::stoi(filepath.substr(0, slashLoc));
+                    slashLoc = filepath.find("/");
+                    line = std::stoi(filepath.substr(0, slashLoc));
                     filepath = filepath.substr(filepath.find(" ") + 1, filepath.length() - filepath.find(" ") + 1);
                     object.lines[jk][i].x2 = line1.x;
                     object.lines[jk][i].y2 = line1.y;
@@ -263,12 +267,13 @@ OBJ openOBJ(std::string filepath)
                 }
                 else
                 {
-                    object.lines[jk][i].x1 = object.lines[i-1].x2;
-                    object.lines[jk][i].z1 = object.lines[i-1].z2;
-                    object.lines[jk][i].y1 = object.lines[i-1].y2;
+                    object.lines[jk][i].x1 = object.lines[jk][i-1].x2;
+                    object.lines[jk][i].z1 = object.lines[jk][i-1].z2;
+                    object.lines[jk][i].y1 = object.lines[jk][i-1].y2;
                     int slashLoc = filepath.find("/");
                     int line = std::stoi(filepath.substr(0, slashLoc));
                     filepath = filepath.substr(filepath.find(" ") + 1, filepath.length() - filepath.find(" ") + 1);
+		    point3d line1 = OBJvToPoint3D(object.points[line-1]);
                     object.lines[jk][i].x2 = line1.x;
                     object.lines[jk][i].y2 = line1.y;
                     object.lines[jk][i].z2 = line1.z;
@@ -282,22 +287,24 @@ OBJ openOBJ(std::string filepath)
 }
 
 static void renderPixel(int x, int y) {
-    XDrawPoint(dsp, win, gc, x, y);
+    XDrawPoint(dis, win, gc, x, y);
 }
 
 static void render() {
     XClearWindow(dis, win);
-    for
+    for (int i = 0; i < pixels.size(); i++) {
+      renderPixel(pixels[i].x, pixels[i].y);
+    }
 }
 
-void displayOBJ(OBJ toDisplay, bool shaderEnable)
+void displayOBJ(OBJ object, bool shaderEnable)
 {
     //calculate 2D view and display pixels with correct colors. Darken colors for the farther they are IF shade is true.
     //darkness formula with col beinnnng a int inn hex format ((col & 0x7E7E7E) >> 1) | (col & 0x808080)
-    for(int i = 0; i< object.lines.size(); i++) {
+    for(int i = 0; i < object.lines.size(); i++) {
       for (int k = 0; k < object.lines[i].size(); k++) {
         //calculate what pixels to display
-        if(frontx[object.lines[i][k].x1] < object.lines[i][k].z1 && fronty[object.lines[i][k].y1] < object.lines[i][k].z1) {
+        if(frontx[(int) object.lines[i][k].x1] < object.lines[i][k].z1 && fronty[(int) object.lines[i][k].y1] < object.lines[i][k].z1) {
             double ys = object.lines[i][k].y1 - object.lines[i][k].y2;
             double xs = object.lines[i][k].x1 - object.lines[i][k].x2;        
             double slope = ys/xs;
@@ -308,7 +315,7 @@ void displayOBJ(OBJ toDisplay, bool shaderEnable)
                 
             }
         }
-        if(frontx[object.lines[i][k].x2] < object.lines[i][k].z2 && fronty[object.lines[i][k].y2] < object.lines[i][k].z2) {
+        if(frontx[(int) object.lines[i][k].x2] < object.lines[i][k].z2 && fronty[(int) object.lines[i][k].y2] < object.lines[i][k].z2) {
             double ys = object.lines[i][k].y2 - object.lines[i][k].y1;
             double xs = object.lines[i][k].x2 - object.lines[i][k].x1;        
             double slope = ys/xs;
@@ -319,11 +326,12 @@ void displayOBJ(OBJ toDisplay, bool shaderEnable)
             }
         }
     }
+    }
     render();
 }
 void removeOBJ(int toRemove)
 {
-    scene.erase(toRemove);
+    scene.erase(scene.begin() + toRemove);
     render();
 }
 #endif
