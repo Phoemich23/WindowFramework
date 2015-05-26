@@ -293,11 +293,12 @@ void displayOBJ(OBJ toDisplay, bool shaderEnable)
       for (int k = 0; k < object.lines[i].size(); k++) {
         //calculate what pixels to display
         if(frontx[object.lines[i][k].x1] < object.lines[i][k].z1 && fronty[object.lines[i][k].y1] < object.lines[i][k].z1) {
-            for() {
-
-            }
+            double ys = object.lines[i][k].y1 - object.lines[i][k].y2;
+            double xs = object.lines[i][k].x1 - object.lines[i][k].x2;        
+            //for() {
+                //to be finished
+            //}
         }
-      }
     }
     render();
 }
