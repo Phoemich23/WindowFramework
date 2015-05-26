@@ -1,5 +1,5 @@
-#ifndef LINUX3
-#define LINUX3
+#ifndef LINUX3D
+#define LINUX3D
 #include <stdio.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
