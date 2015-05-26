@@ -1,9 +1,12 @@
 #include "Linux.h"
 
 int main() {
-    newBlankWindow(500, 500, 500);
+    newBlankWindow(500, 500);
     while (!closed) {
-        displayOBJ(openOBJ("/home/lukep/cube.obj"), true);
+	std::cout << "Opening OBJ\n";
+	OBJ toLoad = openOBJ("/home/user/cube.obj");
+        displayOBJ(toLoad);
+        std::cout << "Displayed\n";
         sleep(500);
         removeOBJ(0);
     }
