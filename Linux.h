@@ -30,7 +30,11 @@ static XEvent event;
 static int *frontx = NULL;
 static int *fronty = NULL;
 static GC gc;
-
+struct point
+{
+    int x, y;
+};
+static std::vector<point> pixels;
 struct pointColor
 {
     double x=-1, y=-1, z=-1;
@@ -283,6 +287,7 @@ static void renderPixel(int x, int y) {
 
 static void render() {
     XClearWindow(dis, win);
+    for
 }
 
 void displayOBJ(OBJ toDisplay, bool shaderEnable)
@@ -295,9 +300,23 @@ void displayOBJ(OBJ toDisplay, bool shaderEnable)
         if(frontx[object.lines[i][k].x1] < object.lines[i][k].z1 && fronty[object.lines[i][k].y1] < object.lines[i][k].z1) {
             double ys = object.lines[i][k].y1 - object.lines[i][k].y2;
             double xs = object.lines[i][k].x1 - object.lines[i][k].x2;        
-            //for() {
-                //to be finished
-            //}
+            double slope = ys/xs;
+            for(int x = 0; x < (int) xs; x++) {
+                int y = (slope*(x-object.lines[i][k].x1))+object.lines[i][k].y1;
+                pixels[k*(i+1)].x = x;
+                pixels[k*(i+1)].y = y;
+                
+            }
+        }
+        if(frontx[object.lines[i][k].x2] < object.lines[i][k].z2 && fronty[object.lines[i][k].y2] < object.lines[i][k].z2) {
+            double ys = object.lines[i][k].y2 - object.lines[i][k].y1;
+            double xs = object.lines[i][k].x2 - object.lines[i][k].x1;        
+            double slope = ys/xs;
+            for(int x = 0; x < (int) xs; x++) {
+                int y = (slope*(x-object.lines[i][k].x2))+object.lines[i][k].y2;
+                pixels[k*(i+1)].x = x;
+                pixels[k*(i+1)].y = y;
+            }
         }
     }
     render();
