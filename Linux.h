@@ -27,6 +27,9 @@ extern bool mouseClicked = false;
 extern double mouseLocX;
 extern double mouseLocY;
 static XEvent event;
+static int *frontx = NULL;
+static int *fronty = NULL;
+static GC gc;
 
 struct pointColor
 {
@@ -50,7 +53,7 @@ struct OBJ
 {
     std::vector<OBJv> points;
     //points turns into lines
-    std::vector<Line> lines;
+    std::vector<std::vector<Line>> lines;
     std::vector<pointColor> colors; //Hex values in string format per pixel, defaultly green
     double xlength, ylength, zlength;
     double x1, x2, y1, y2, z1, z2; //closest and farthest points on each axis
@@ -121,6 +124,9 @@ static void checkEvents ()
 }
 void newBlankWindow(int x, int y, int z)
 {
+    unsigned int white = WhitePixel(dsp,screen);
+    numbers = (int*) realloc (frontx, x *sizeof(int));
+    fronty = (int*) realloc (fronty, y *sizeof(int));
     dis = XOpenDisplay(NULL);
     win = XCreateSimpleWindow(dis, RootWindow(dis, 0), 1, 1, x, y, \
                               0, BlackPixel (dis, 0), BlackPixel(dis, 0));
@@ -129,6 +135,11 @@ void newBlankWindow(int x, int y, int z)
     Atom wmDelete=XInternAtom(dis, "WM_DELETE_WINDOW", True);
     XSetWMProtocols(dis, win, &wmDelete, 1);
     std::thread (checkEvents).detach();
+    gc = XCreateGC(dis, win,
+                 0,
+                 NULL);
+
+    XSetForeground(dis, gc, BlackPixel (dis, 0));
 }
 
 void grabPointer()
@@ -155,6 +166,8 @@ OBJ openOBJ(std::string filepath)
 {
     OBJ object;
     std::ifstream objfile(filepath);
+    //junk v
+    int jk = 0;
     while(std::getline(objfile, filepath))
     {
         if(filepath.substr(0, 1).compare("#"))
@@ -234,42 +247,63 @@ OBJ openOBJ(std::string filepath)
                     int line = std::stoi(filepath.substr(0, slashLoc));
                     filepath = filepath.substr(filepath.find(" ") + 1, filepath.length() - filepath.find(" ") + 1);
                     point3d line1 = object.points[line-1];
-                    object.lines[i].x1 = line1.x;
-                    object.lines[i].y1 = line1.y;
-                    object.lines.[i]z1 = line1.z;
+                    object.lines[jk][i].x1 = line1.x;
+                    object.lines[jk][i].y1 = line1.y;
+                    object.lines[jk][i].z1 = line1.z;
                     int slashLoc = filepath.find("/");
                     int line = std::stoi(filepath.substr(0, slashLoc));
                     filepath = filepath.substr(filepath.find(" ") + 1, filepath.length() - filepath.find(" ") + 1);
-                    object.lines[i].x2 = line1.x;
-                    object.lines[i].y2 = line1.y;
-                    object.lines[i].z2 = line1.z;
+                    object.lines[jk][i].x2 = line1.x;
+                    object.lines[jk][i].y2 = line1.y;
+                    object.lines[jk][i].z2 = line1.z;
                 }
                 else
                 {
-                    object.lines[i].x1 = object.lines[i-1].x2;
-                    object.lines[i].z1 = object.lines[i-1].z2;
-                    object.lines[i].y1 = object.lines[i-1].y2;
+                    object.lines[jk][i].x1 = object.lines[i-1].x2;
+                    object.lines[jk][i].z1 = object.lines[i-1].z2;
+                    object.lines[jk][i].y1 = object.lines[i-1].y2;
                     int slashLoc = filepath.find("/");
                     int line = std::stoi(filepath.substr(0, slashLoc));
                     filepath = filepath.substr(filepath.find(" ") + 1, filepath.length() - filepath.find(" ") + 1);
-                    object.lines.x2 = line1.x;
-                    object.lines.y2 = line1.y;
-                    object.lines.z2 = line1.z;
+                    object.lines[jk][i].x2 = line1.x;
+                    object.lines[jk][i].y2 = line1.y;
+                    object.lines[jk][i].z2 = line1.z;
                 }
                 first = false;
             }
         }
+        jk++;
     }
     return object;
 }
-void displayOBJ(OBJ toDisplay, bool shaderEnable, double x1, double x2, double y1, double y2, double z1, double z2)
+
+static void renderPixel(int x, int y) {
+    XDrawPoint(dsp, win, gc, x, y);
+}
+
+static void render() {
+    XClearWindow(dis, win);
+}
+
+void displayOBJ(OBJ toDisplay, bool shaderEnable)
 {
     //calculate 2D view and display pixels with correct colors. Darken colors for the farther they are IF shade is true.
     //darkness formula with col beinnnng a int inn hex format ((col & 0x7E7E7E) >> 1) | (col & 0x808080)
+    for(int i = 0; i< object.lines.size(); i++) {
+      for (int k = 0; k < object.lines[i].size(); k++) {
+        //calculate what pixels to display
+        if(frontx[object.lines[i][k].x1] < object.lines[i][k].z1 && fronty[object.lines[i][k].y1] < object.lines[i][k].z1) {
+            for() {
 
+            }
+        }
+      }
+    }
+    render();
 }
 void removeOBJ(int toRemove)
 {
     scene.erase(toRemove);
+    render();
 }
 #endif
