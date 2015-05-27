@@ -186,7 +186,8 @@ OBJ openOBJ(std::string filepath)
             continue;
         }
         std::string vspace = "v ";
-        std::cout << filepath.substr(0,2); 
+	std::cout << filepath << std::endl;
+        std::cout << "\"" << filepath.substr(0,2) << "\"\n"; 
         if(filepath.substr(0,2) == vspace)
         {
             filepath = filepath.substr(2, filepath.length() - 2);
@@ -207,12 +208,12 @@ OBJ openOBJ(std::string filepath)
             object.vcount++;
 	    std::cout << "New point x:" << v.x << " y:" << v.y << " z:" << v.z << std::endl;
         }
-        if(filepath.substr(0, 6).compare("mtllib"))
+        if(!filepath.substr(0, 6).compare("mtllib"))
         {
             mtlused = true;
             mtllib(filepath);
         }
-        if(filepath.substr(0, 6).compare("usemtl"))
+        if(!filepath.substr(0, 6).compare("usemtl"))
         {
             if(mtlused == false)
             {
@@ -223,7 +224,7 @@ OBJ openOBJ(std::string filepath)
                 filepath = filepath.substr(7, filepath.length() - 7);
                 for(int i = 0; i < mtlIndexer.size(); i++)
                 {
-                    if(filepath.compare(mtlIndexer[i]))
+                    if(!filepath.compare(mtlIndexer[i]))
                     {
                         object.colors.insert(object.colors.end(), mtlColors[i].begin(), mtlColors[i].end());
                         break;
@@ -231,24 +232,20 @@ OBJ openOBJ(std::string filepath)
                 }
             }
         }
-        if(filepath.substr(0,2).compare("s "))
+        if(!filepath.substr(0,2).compare("s "))
         {
             continue;
         }
-        if(filepath.substr(0,2).compare("g "))
+        if(!filepath.substr(0,2).compare("g "))
         {
             continue;
         }
-        if(filepath.substr(0,3).compare("vn "))
+        if(!filepath.substr(0,3).compare("vn "))
         {
             //need knowledge on what vn is
             object.vncount++;
         }
-        if(filepath.substr(0,2).compare("s "))
-        {
-            continue;
-        }
-        if(filepath.substr(0,2) == "f ")
+        if(!filepath.substr(0,2) == "f ")
         {
             filepath+=" ";
             filepath = filepath.substr(2, filepath.length() - 2);
