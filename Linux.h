@@ -136,8 +136,7 @@ void newBlankWindow(int x, int y)
     Atom wmDelete=XInternAtom(dis, "WM_DELETE_WINDOW", True);
     XSetWMProtocols(dis, win, &wmDelete, 1);
     std::cout << "Thread created\n";
-    std::thread t(checkEvents);
-    t.detach();
+    std::thread (checkEvents).detach();
     gc = XCreateGC(dis, win,
                    0,
                    NULL);
