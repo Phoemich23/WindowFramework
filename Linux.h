@@ -245,7 +245,7 @@ OBJ openOBJ(std::string filepath)
             //need knowledge on what vn is
             object.vncount++;
         }
-        if(!filepath.substr(0,2) == "f ")
+        if(filepath.substr(0,2) == "f ")
         {
             filepath+=" ";
             filepath = filepath.substr(2, filepath.length() - 2);
