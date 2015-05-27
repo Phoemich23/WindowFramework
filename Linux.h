@@ -181,11 +181,12 @@ OBJ openOBJ(std::string filepath)
     {
 	std::cout << "Reading OBJ\n";
 	std::cout << filepath << std::endl;
-        if(filepath.substr(0, 1).compare("#"))
+        if(!filepath.substr(0, 1).compare("#"))
         {
             continue;
         }
         std::string vspace = "v ";
+        std::cout << filepath.substr(0,2); 
         if(filepath.substr(0,2) == vspace)
         {
             filepath = filepath.substr(2, filepath.length() - 2);
